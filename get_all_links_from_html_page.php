@@ -31,6 +31,8 @@
      <?php
      if(isset($_GET["url"])){
      $q=$_GET['url'];
+
+
      $htmlpage = file_get_contents($q);
 //Create a new DOM document
 $dom = new DOMDocument;
@@ -64,16 +66,24 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } 
 $a=$link->getAttribute('href');
-if(substr($a,0,4)!="http")
+if(strcmp(substr($a,0,4),"http")!=0)
 {
-$a=$q.$a;
+  if($a[0]=='/')
+    $a=substr($a,1);
+$w=$q;
+while(substr($w,-1,1)!='/' && count($w)!=0 )
+  {
+    $w=substr($w,0,-1);
+  }
+ 
+$a=$w.$a;
 }
 $sql = "INSERT INTO links (link, outlink)
 VALUES ('$q', '$a')";
 
 if ($conn->query($sql) === TRUE) {
    // echo "New record created successfully";
-   echo $a.'<br>';
+   echo $link->getAttribute('href').'<br>'.$a.'<br>';
 
 } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
